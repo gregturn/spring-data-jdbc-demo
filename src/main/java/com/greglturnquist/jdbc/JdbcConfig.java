@@ -15,8 +15,13 @@
  */
 package com.greglturnquist.jdbc;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jdbc.core.DefaultDataAccessStrategy;
+import org.springframework.data.jdbc.core.SqlGeneratorSource;
+import org.springframework.data.jdbc.mapping.model.JdbcMappingContext;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 
 /**
  * @author Greg Turnquist
@@ -25,4 +30,9 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 @EnableJdbcRepositories
 public class JdbcConfig {
 
+	@Bean
+	DefaultDataAccessStrategy defaultDataAccessStrategy(JdbcMappingContext context,
+														NamedParameterJdbcOperations operations) {
+		return new DefaultDataAccessStrategy(new SqlGeneratorSource(context), operations, context);
+	}
 }
