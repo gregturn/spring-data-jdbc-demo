@@ -26,19 +26,12 @@ import org.springframework.data.annotation.Id;
  */
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE) // for Jackson
-public class Employee {
+public class Manager {
 
-	@Id private Long id;
-	private String firstName;
-	private String lastName;
-	private String role;
+	@Id Long id;
+	String name;
 
-	private Manager manager;
-
-	Employee(String firstName, String lastName, String role, Manager manager) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.role = role;
-		this.manager = manager;
+	public Manager(String name) {
+		this.name = name;
 	}
 }

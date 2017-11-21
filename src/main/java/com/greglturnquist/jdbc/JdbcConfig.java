@@ -15,11 +15,17 @@
  */
 package com.greglturnquist.jdbc;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jdbc.core.DefaultDataAccessStrategy;
 import org.springframework.data.jdbc.core.SqlGeneratorSource;
+import org.springframework.data.jdbc.mapping.model.DefaultNamingStrategy;
 import org.springframework.data.jdbc.mapping.model.JdbcMappingContext;
+import org.springframework.data.jdbc.mapping.model.JdbcPersistentProperty;
+import org.springframework.data.jdbc.mapping.model.NamingStrategy;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 
@@ -34,5 +40,33 @@ public class JdbcConfig {
 	DefaultDataAccessStrategy defaultDataAccessStrategy(JdbcMappingContext context,
 														NamedParameterJdbcOperations operations) {
 		return new DefaultDataAccessStrategy(new SqlGeneratorSource(context), operations, context);
+	}
+
+	@Bean
+	NamingStrategy namingStrategy() {
+
+		Map<String, String> columnAliases = new HashMap<>();
+		columnAliases.put("Manager.id", "Manager_id");
+
+		Map<String, String> reverseColumnAliases = new HashMap<>();
+		reverseColumnAliases.put("Employee", "manager_id");
+
+		return new DefaultNamingStrategy() {
+
+			@Override
+			public String getColumnName(JdbcPersistentProperty property) {
+
+				String defaultName = super.getColumnName(property);
+				String key = getTableName(property.getOwner().getType()) + "." + defaultName;
+				return columnAliases.getOrDefault(key, defaultName);
+			}
+
+			@Override
+			public String getReverseColumnName(JdbcPersistentProperty property) {
+
+				String defaultName = super.getReverseColumnName(property);
+				return reverseColumnAliases.getOrDefault(defaultName, defaultName);
+			}
+		};
 	}
 }

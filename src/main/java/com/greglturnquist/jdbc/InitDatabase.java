@@ -26,10 +26,14 @@ import org.springframework.context.annotation.Configuration;
 public class InitDatabase {
 
 	@Bean
-	CommandLineRunner loadUsers(EmployeeRepository repository) {
+	CommandLineRunner loadUsers(EmployeeRepository employeeRepository) {
 		return args -> {
-			repository.save(new Employee("Frodo", "Baggins", "ring bearer"));
-			repository.save(new Employee("Bilbo", "Baggins", "burglar"));
+
+			Manager gandalf = new Manager("Gandalf");
+			employeeRepository.save(new Employee("Frodo", "Baggins", "ring bearer", gandalf));
+
+			Manager saruman = new Manager("Saruman");
+			employeeRepository.save(new Employee("Bilbo", "Baggins", "burglar", saruman));
 		};
 	}
 }
