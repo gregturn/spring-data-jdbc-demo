@@ -1,0 +1,60 @@
+== Spring Data JDBC Demo App
+
+=== Build
+
+```
+./mvnw clean package
+```
+
+=== Run local
+
+```
+java -jar target/spring-data-jdbc-demo-0.0.1-SNAPSHOT.jar
+```
+
+Access the app via http://localhost:8080/api/employees[]
+
+=== Deploy and run on Cloud Foundry (PCF Dev)
+
+Create MySQL dtabase service and push app:
+
+```
+cf create-service p-mysql 512mb mysql
+cf push -f cloudfoundry/jdbc-demo_manifest.yml -p target/spring-data-jdbc-demo-0.0.1-SNAPSHOT.jar
+```
+
+Add some sample data:
+
+```
+curl -H "Content-Type: application/json" http://jdbc-demo.local.pcfdev.io/employees -d '{ "firstName": "Frodo", "lastName": "Baggins", "role": "ring bearer"}'
+curl -H "Content-Type: application/json" http://jdbc-demo.local.pcfdev.io/employees -d '{ "firstName": "Bilbo", "lastName": "Baggins", "role": "burglar"}'
+```
+
+Access the app via http://jdbc-demo.local.pcfdev.io/api/employees[]
+
+=== Deploy and run on Kubernetes (Minikube)
+
+Build Docker image using Minikube Docker environment
+
+```
+eval $(minikube docker-env)
+./mvnw dockerfile:build
+```
+
+Deploy MySQL dtabase and app:
+
+```
+kubectl apply -f kubernetes/mysql/
+kubectl apply -f kubernetes/
+```
+
+Add some sample data:
+
+```
+curl -H "Content-Type: application/json" $(minikube service jdbc-demo --url)/employees -d '{ "firstName": "Frodo", "lastName": "Baggins", "role": "ring bearer"}'
+curl -H "Content-Type: application/json" $(minikube service jdbc-demo --url)/employees -d '{ "firstName": "Bilbo", "lastName": "Baggins", "role": "burglar"}'
+```
+
+Access the app using `open $(minikube service jdbc-demo --url)/api/employees`
+
+

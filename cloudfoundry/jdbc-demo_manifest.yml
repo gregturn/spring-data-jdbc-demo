@@ -1,0 +1,10 @@
+applications:
+- name: jdbc-demo
+  disk_quota: 512M
+  instances: 1
+  memory: 512M
+  routes:
+  - route: jdbc-demo.local.pcfdev.io
+  services:
+  - mysql
+  stack: cflinuxfs2
