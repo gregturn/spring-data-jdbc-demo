@@ -15,25 +15,38 @@
  */
 package com.greglturnquist.jdbc;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 /**
  * @author Greg Turnquist
+ * @author Thomas Risberg
  */
 @Configuration
 public class InitDatabase {
+
+	@Autowired
+	Environment environment;
 
 	@Bean
 	CommandLineRunner loadUsers(EmployeeRepository employeeRepository) {
 		return args -> {
 
-			Manager gandalf = new Manager("Gandalf");
-			employeeRepository.save(new Employee("Frodo", "Baggins", "ring bearer", gandalf));
+			List<String> profiles = Arrays.asList(environment.getActiveProfiles());
+			// only add sample data for local app
+			if (!profiles.contains("cloud") && !profiles.contains("kubernetes")) {
+				Manager gandalf = new Manager("Gandalf");
+				employeeRepository.save(new Employee("Frodo", "Baggins", "ring bearer", gandalf));
 
-			Manager saruman = new Manager("Saruman");
-			employeeRepository.save(new Employee("Bilbo", "Baggins", "burglar", saruman));
+				Manager saruman = new Manager("Saruman");
+				employeeRepository.save(new Employee("Bilbo", "Baggins", "burglar", saruman));
+			}
 		};
 	}
 }
